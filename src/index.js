@@ -9,8 +9,14 @@ const port = 3000;
 //use static file and css in path src/public 
 app.use(express.static(path.join(__dirname,'public')))
 
+//Middleware
+app.use(express.urlencoded({
+  extended: true
+}));
+app.use(express.json());
+
 //HTTP logger
-app.use(morgan('combined'));
+//app.use(morgan('combined'));
 
 //Template engine (npm install express-handlebars)
 const handlebars = exphbs.create({ extname: '.hbs',});//.handlebars->.hbs
@@ -33,6 +39,11 @@ app.get('/news', (req, res) => {
 
 app.get('/search', (req, res) => {
   res.render("search");//body
+})
+
+app.post('/search', (req, res) => {
+  console.log(req.body)
+  res.send('');//body
 })
 
 app.listen(port, () => {
