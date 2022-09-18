@@ -1,0 +1,10 @@
+//npm run watch (code bên này qua file css)
+//"watch": "node-sass --watch src/resources/scss/app.scss src/public/css/app.css",
+//"watch": "node-sass --watch src/resources/scss/ --output src/public/css/",
+//npm install node-sass --save-dev
+
+@import 'variables'; 
+
+h1 {
+    color: $black-color;
+}
