@@ -6,6 +6,8 @@ const exphbs = require("express-handlebars");
 const app = express();
 const port = 3000;
 
+const route = require('./routes')//tự động chọc vào file index
+
 //use static file and css in path src/public 
 app.use(express.static(path.join(__dirname,'public')))
 
@@ -24,28 +26,16 @@ app.engine('.hbs', handlebars.engine);
 app.set('view engine', '.hbs');
 app.set('views',path.join(__dirname,'resources/views'))
 
-// app.engine('handlebars', handlebars())
-// app.set('view engine','handlebars');
 
+//Route init
+route(app);
 
-app.get('/', (req, res) => {
-  // res.send('alo');
-  res.render("home");//body
-})
+// app.post('/search', (req, res) => {
+// console.log(req.body)
+// res.send('');//body
+// })
 
-app.get('/news', (req, res) => {
-  res.render("news");//body
-})
-
-app.get('/search', (req, res) => {
-  res.render("search");//body
-})
-
-app.post('/search', (req, res) => {
-  console.log(req.body)
-  res.send('');//body
-})
-
+//Start web server nhờ express
 app.listen(port, () => {
   console.log(`Example app listening http://localhost:${port}`)
 })
