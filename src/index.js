@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const exphbs = require('express-handlebars');
+const methodOverride = require('method-override');
 
 const app = express();
 const port = 3000;
@@ -21,13 +22,21 @@ app.use(express.urlencoded({
 }))
 app.use(express.json());
 
+// override with POST having ?_method=DELETE/PUT
+app.use(methodOverride('_method'));
+
 //HTTP logger
 //app.use(morgan('combined'));
 
 //Template engine (npm install express-handlebars)
-const handlebars = exphbs.create({ extname: '.hbs' }); //.handlebars->.hbs
-
-app.engine('.hbs', handlebars.engine);
+app.engine('.hbs', exphbs.engine({
+  extname: '.hbs',
+  helpers:{
+    sum: function(a,b){
+      return a+b;
+    }
+  } 
+}));
 app.set('view engine', '.hbs');
 app.set('views', path.join(__dirname, 'resources/views'));
 
