@@ -1,7 +1,7 @@
 <div class="mt-4">
     <div>
-      <h2>My Courses</h2>
-      <a href="/me/trash/courses">Recycle Bin</a>
+      <h2>RECYCLE BIN</h2>
+      <a href="/me/stored/courses">Courses</a>
     </div>
 
     <table class="table mt-4">
@@ -21,15 +21,14 @@
                 <td>{{this.videoId}}</td>
                 <td>{{this.createdAt}}</td>
                 <td>
-                    <a href="/courses/{{this._id}}/edit" class="btn btn-link">Update</a>
-                    <a href="" class="btn btn-link" data-toggle="modal" data-target="#delete-course-modal" data-id="{{this._id}}">Delete</a>
+                    <a href="" class="btn btn-link btn-restore" data-id="{{this._id}}">Restore</a>
+                    <a href="" class="btn btn-link" data-toggle="modal" data-target="#delete-course-modal" data-id="{{this._id}}">Delete absolutely</a>
                 </td>
             </tr>
             {{else}}
             <tr>
               <td colspan="5" class="text-center">
-                You haven't posted a course yet.
-                <a href="/courses/create">Create course</a>
+                Recycle bin is empty.
               </td>
             </tr>
 
@@ -43,30 +42,34 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Delete course?</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Delete absolutely course?</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        Are you sure delete this course?
+        This action cannot be undone!!
+        Are you sure delete absolutely this course?
       </div>
       <div class="modal-footer">
-        <button type="button" id="btn-delete-course" class="btn btn-danger">Delete</button>
+        <button type="button" id="btn-delete-course" class="btn btn-danger">Delete absolutely</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
 
-{{!-- Delete hiden form --}}
+{{!-- Hidden form for submit method DELETE(delete force) and PATCH(restore) --}}
 <form name="delete-course-form" method="POST"></form>
+<form name="restore-course-form" method="POST"></form>
 
 <script>
     document.addEventListener('DOMContentLoaded',function(){
         var courseId;
         var deleteForm = document.forms['delete-course-form'];
+        var restoreForm = document.forms['restore-course-form'];
         var btnDeleteCourse = document.getElementById('btn-delete-course');
+        var btnRestore = $('.btn-restore');
         //When dialog confirm clicked
         $('#delete-course-modal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
@@ -74,8 +77,16 @@
         });
         //When delete course button clicked
         btnDeleteCourse.onclick = function(){
-            deleteForm.action = '/courses/' + courseId + '?_method=DELETE';
+            deleteForm.action = '/courses/' + courseId + '/force?_method=DELETE';
             deleteForm.submit();
         }
-    })
+        //Restore button clicked
+        btnRestore.click(function(e){
+            e.preventDefault();
+            var courseRestoreId = $(this).data('id');
+            restoreForm.action = '/courses/' + courseRestoreId + '/restore?_method=PATCH';
+            restoreForm.submit();
+        })
+
+    });
 </script>
