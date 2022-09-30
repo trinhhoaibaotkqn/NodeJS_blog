@@ -1,13 +1,29 @@
-<div class="mt-4">
+<form method="POST" class="mt-4" action="/courses/handle-form-trash-actions">
     <div>
       <h2>RECYCLE BIN</h2>
       <a href="/me/stored/courses">Courses</a>
-    </div>
+
+      <div class="mt-4 d-flex align-items-center">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="checkbox-all">
+          <label class="form-check-label" for="checkbox-all">
+            Select all
+          </label>
+        </div>
+        <select class="form-select form-control-sm select-all-action" name="action" required="required">
+          <option value="" selected>--Action--</option>
+          <option value="restore">Restore</option>
+          <option value="delete">Delete</option>
+        </select>
+
+        <button class="btn btn-primary btn-sm btn-check-all-submit" disabled="disabled">Do</button>
+      </div>
+    </form>
 
     <table class="table mt-4">
         <thead>
             <tr>
-                <th scope="col">#</th>
+                <th scope="col" colspan="2">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">VideoId</th>
                 <th scope="col " colspan="2">Date deleted</th>
@@ -16,6 +32,11 @@
         <tbody>
              {{#each courses}}
             <tr>
+                <td>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="courseIds[]" value="{{this._id}}">
+                  </div>
+                </td>
                 <th scope="row">{{sum 1 @index}}</th>
                 <td>{{this.name}}</td>
                 <td>{{this.videoId}}</td>
@@ -67,9 +88,13 @@
     document.addEventListener('DOMContentLoaded',function(){
         var courseId;
         var deleteForm = document.forms['delete-course-form'];
-        var restoreForm = document.forms['restore-course-form'];
         var btnDeleteCourse = document.getElementById('btn-delete-course');
+        var restoreForm = document.forms['restore-course-form'];
         var btnRestore = $('.btn-restore');
+        var checkboxAll = $('#checkbox-all');
+        var courseItemCheckbox = $('input[name="courseIds[]"]');
+        var checkAllSubmitBtn = $('.btn-check-all-submit');
+
         //When dialog confirm clicked
         $('#delete-course-modal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
@@ -87,6 +112,29 @@
             restoreForm.action = '/courses/' + courseRestoreId + '/restore?_method=PATCH';
             restoreForm.submit();
         })
+
+        //When checkboxAll is clicked
+        checkboxAll.change(function(){
+          var isCheckAll = $(this).prop('checked');
+          courseItemCheckbox.prop('checked', isCheckAll);
+          renderCheckAllSubmitBtn();
+        });
+
+        //When course item checkbox is clicked
+        courseItemCheckbox.change(function(){
+          var isCheckAll = (courseItemCheckbox.length === $('input[name="courseIds[]"]:checked').length);
+            checkboxAll.prop('checked', isCheckAll);
+            renderCheckAllSubmitBtn();
+        });
+
+        function renderCheckAllSubmitBtn(){
+          var checkedCount = $('input[name="courseIds[]"]:checked').length;
+          if(checkedCount > 0){
+            checkAllSubmitBtn.attr('disabled', false);
+          }else{
+            checkAllSubmitBtn.attr('disabled', true);
+          }
+        }
 
     });
 </script>
