@@ -16,12 +16,12 @@ class CoursesController{
     }
 
     // [POST] /courses/create
-    store(req, res){
+    store(req, res, next){
         // res.json(req.body)
         const course = new Course(req.body);
         course.save()
             .then(() => res.redirect('/me/stored/courses'))
-            .catch(err => {})
+            .catch(next);
     }
 
     // [GET] /courses/:id/edit

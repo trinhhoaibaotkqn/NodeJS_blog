@@ -3,6 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const exphbs = require('express-handlebars');
 const methodOverride = require('method-override');
+const SortMiddleware = require('./app/middlewares/SortMiddleware');
 
 const app = express();
 const port = 3000;
@@ -16,11 +17,14 @@ db.connect();
 //use static file and css in path src/public
 app.use(express.static(path.join(__dirname, 'public')));
 
-//Middleware
+//Middleware cấu trúc lại dữ liệu lưu vào object req.body khi submit
 app.use(express.urlencoded({
   extended: true
 }))
 app.use(express.json());
+
+//Custom middleware
+app.use(SortMiddleware);
 
 // override with POST having ?_method=DELETE/PUT
 app.use(methodOverride('_method'));
@@ -34,6 +38,25 @@ app.engine('.hbs', exphbs.engine({
   helpers:{
     sum: function(a,b){
       return a+b;
+    },
+    sortable: (field, sort)=>{
+      const sortType = field === sort.column ? sort.type : 'default'
+      const icons = {
+        default: 'fa fa-sort',
+        asc: 'fa fa-sort-amount-asc',
+        desc: 'fa fa-sort-amount-desc',
+      }
+      const types = {
+        default: 'desc',
+        asc: 'desc',
+        desc: 'asc',
+      }
+      const icon = icons[sortType];
+      const type = types[sortType];
+      //url tiếp theo cho thẻ a sau khi click
+      return `<a href="?_sort&column=${field}&type=${type}">
+                <i class="${icon}" aria-hidden="true"></i>
+              </a>`;
     }
   } 
 }));
