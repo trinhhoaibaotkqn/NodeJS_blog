@@ -20,7 +20,7 @@ class MeController{
         }))
     }
 
-    trashCourses(req, res, next){
+    trashCourses(req, res, next){        
         Course.findDeleted({})
             .then(courses => res.render('me/trash-courses',{
                 courses: mutipleMongooseToObject(courses)
