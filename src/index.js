@@ -4,9 +4,14 @@ const morgan = require('morgan');
 const exphbs = require('express-handlebars');
 const methodOverride = require('method-override');
 const SortMiddleware = require('./app/middlewares/SortMiddleware');
+const cookieParser = require('cookie-parser');
+
+
 
 const app = express();
 const port = 3000;
+
+app.use(cookieParser());
 
 const route = require('./routes'); //tự động chọc vào file index
 
@@ -35,11 +40,11 @@ app.use(methodOverride('_method'));
 //Template engine (npm install express-handlebars)
 app.engine('.hbs', exphbs.engine({
   extname: '.hbs',
-  helpers:{
-    sum: function(a,b){
-      return a+b;
+  helpers: {
+    sum: function (a, b) {
+      return a + b;
     },
-    sortable: (field, sort)=>{
+    sortable: (field, sort) => {
       const sortType = field === sort.column ? sort.type : 'default'
       const icons = {
         default: 'fa fa-sort',
@@ -58,7 +63,7 @@ app.engine('.hbs', exphbs.engine({
                 <i class="${icon}" aria-hidden="true"></i>
               </a>`;
     }
-  } 
+  }
 }));
 app.set('view engine', '.hbs');
 app.set('views', path.join(__dirname, 'resources/views'));
